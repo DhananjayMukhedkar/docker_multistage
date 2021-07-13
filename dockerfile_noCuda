@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:experimental
+
 FROM registry.service.consul:4443/base:2.3.0-SNAPSHOT as builder
 
 
