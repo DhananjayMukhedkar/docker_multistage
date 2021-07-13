@@ -1,0 +1,27 @@
+FROM registry.service.consul:4443/base:2.3.0-SNAPSHOT as builder
+
+
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y \
+    openjdk-8-jdk
+
+ARG USER="yarnapp"
+ARG GROUP="hadoop"
+RUN groupadd -g 1234 $GROUP && \
+    useradd -m --uid 1235  --gid 1234 $USER
+
+
+COPY --from=builder /srv/hops/ /srv/hops/
+
+
+
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
+ENV HADOOP_HOME=/srv/hops/hadoop
+ENV BASE_ENV=/srv/hops/anaconda/envs/theenv
+
+ENV C_INCLUDE_PATH=${BASE_ENV}/include
+ENV CPLUS_INCLUDE_PATH=${BASE_ENV}/include
+
+ENV PATH=${BASE_ENV}/bin:/srv/hops/anaconda/bin:${HADOOP_HOME}/bin:${JAVA_HOME}:${PATH}
+ENV BASE_DIR /srv/hops
