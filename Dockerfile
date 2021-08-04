@@ -2,7 +2,11 @@
 FROM ubuntu:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG USER="yarnapp"
+ARG GROUP="hadoop"
 
+RUN groupadd -g 1234 $GROUP && \
+    useradd -m --uid 1235  --gid 1234 $USER
 
 RUN apt-get update && apt-get install -y \
     openjdk-8-jdk \
@@ -47,8 +51,8 @@ ENV BASE_ENV=/srv/hops/anaconda/envs/theenv
 ENV C_INCLUDE_PATH=${BASE_ENV}/include
 ENV CPLUS_INCLUDE_PATH=${BASE_ENV}/include
 
-ENV PATH=${CUDA_HOME}/bin:${CUDA_HOME}/nvvm/bin:${BASE_ENV}/bin:/srv/hops/anaconda/bin:${HADOOP_HOME}/bin:${JAVA_HOME}:${PATH}
-ENV LD_LIBRARY_PATH=${CUDA_HOME}/targets/x86_64-linux/lib:${CUDA_HOME}/nvvm/lib64:${CUDA_HOME}/extras/CUPTI/lib64:${CUDA_HOME}/extras/Debugger/lib64:${JAVA_HOME}/jre/lib/amd64/server:${HADOOP_HOME}/lib/native:${BASE_ENV}/lib:${LD_LIBRARY_PATH}
+ENV PATH=${PATH}:${CUDA_HOME}/bin:${CUDA_HOME}/nvvm/bin:${BASE_ENV}/bin:/srv/hops/anaconda/bin:${HADOOP_HOME}/bin:${JAVA_HOME}
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${CUDA_HOME}/targets/x86_64-linux/lib:${CUDA_HOME}/nvvm/lib64:${CUDA_HOME}/extras/CUPTI/lib64:${CUDA_HOME}/extras/Debugger/lib64:${JAVA_HOME}/jre/lib/amd64/server:${HADOOP_HOME}/lib/native:${BASE_ENV}/lib
 ENV BASE_DIR /srv/hops
 
 RUN chmod +x /usr/local/bin/*.sh
