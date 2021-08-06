@@ -1,9 +1,14 @@
+FROM registry.service.consul:4443/base:3.0.0-SNAPSHOT as builder
 
 FROM ubuntu:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USER="yarnapp"
 ARG GROUP="hadoop"
+
+COPY --from=builder /srv/hops /srv/hops
+COPY --from=builder /usr/local/cuda-11.0 /usr/local/cuda-11.0
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 RUN groupadd -g 1234 $GROUP && \
     useradd -m --uid 1235  --gid 1234 $USER
@@ -36,10 +41,6 @@ RUN apt-get update && apt-get install -y \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /usr/local/cuda/samples 
 
-
-COPY --from=registry.service.consul:4443/base:3.0.0-SNAPSHOT /usr/local/cuda-11.0 /usr/local/cuda-11.0
-COPY --from=registry.service.consul:4443/base:3.0.0-SNAPSHOT /srv/hops /srv/hops
-COPY --from=registry.service.consul:4443/base:3.0.0-SNAPSHOT /usr/local/bin /usr/local/bin
 
 
 ENV CUDA_HOME=/usr/local/cuda-11.0
