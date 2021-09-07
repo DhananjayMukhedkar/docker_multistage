@@ -1,14 +1,14 @@
-FROM registry.service.consul:4443/base:3.0.0-SNAPSHOT as builder
+ARG TOP_IMAGE
 
-FROM ubuntu:latest
+FROM $TOP_IMAGE
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USER="yarnapp"
 ARG GROUP="hadoop"
 
-COPY --from=builder /srv/hops /srv/hops
-COPY --from=builder /usr/local/cuda-11.0 /usr/local/cuda-11.0
-COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=registry.service.consul:4443/base:3.0.0-SNAPSHOT /srv/hops /srv/hops
+COPY --from=registry.service.consul:4443/base:3.0.0-SNAPSHOT /usr/local/cuda-11.0 /usr/local/cuda-11.0
+COPY --from=registry.service.consul:4443/base:3.0.0-SNAPSHOT /usr/local/bin /usr/local/bin
 
 RUN groupadd -g 1234 $GROUP && \
     useradd -m --uid 1235  --gid 1234 $USER
